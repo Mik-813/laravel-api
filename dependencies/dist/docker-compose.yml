@@ -1,0 +1,16 @@
+services:
+  laravel:
+    build: .
+    working_dir: /workspace
+    volumes:
+      - ../..:/workspace
+    networks:
+      - caddy_network
+    labels:
+      caddy: project.local
+      caddy.reverse_proxy: "{{upstreams 9000}}"
+
+networks:
+  caddy_network:
+    external: true
+    name: caddy_network

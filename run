@@ -1,0 +1,37 @@
+#!/bin/sh
+
+PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+case "$1" in
+  "" | help)
+    printf "dev\t- run development shell\n"
+    printf "dist\t- deploy containerized application\n"
+    printf "help\t- show this message\n"
+    ;;
+  dev)
+    if ! command -v nix >/dev/null 2>&1; then
+      printf "Error: nix is not installed or not in PATH\n"
+      exit 1
+    fi
+    if ! command -v docker >/dev/null 2>&1; then
+      printf "Error: docker is not installed or not in PATH\n"
+      exit 1
+    fi
+    cd "$PROJECT_DIR/dependencies/dev" \
+    && docker compose up -d \
+    && cd "$PROJECT_DIR/project" \
+    && nix develop "$PROJECT_DIR/dependencies/shared"
+    ;;
+  dist)
+    if ! command -v docker >/dev/null 2>&1; then
+      printf "Error: docker is not installed or not in PATH\n"
+      exit 1
+    fi
+    cd "$PROJECT_DIR/dependencies/dist" \
+    && docker compose up -d --build
+    ;;
+  *)
+    printf "Unknown option: %s\n" "$1"
+    printf "Available options: dev, dist, help\n"
+    ;;
+esac
