@@ -10,13 +10,29 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+
+        php = pkgs.php82.buildEnv {
+          extensions = ({ enabled, all }: enabled ++ (with all; [
+            bcmath
+            curl
+            dom
+            fileinfo
+            mbstring
+            pdo
+            tokenizer
+            xml
+            zip
+          ]));
+          extraConfig = ''
+            memory_limit = 512M
+          '';
+        };
       in
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            # php82
-            # php82Packages.composer
-            laravel
+            php
+            php82Packages.composer
             nodejs
           ];
  
