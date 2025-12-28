@@ -35,3 +35,5 @@ case "$1" in
     printf "Available options: dev, dist, help\n"
     ;;
 esac
+
+exit 0
