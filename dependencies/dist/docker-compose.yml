@@ -1,16 +1,10 @@
 services:
-  laravel:
-    build: .
-    working_dir: /workspace
+  franken_php:
+    container_name: franken_php
+    image: dunglas/frankenphp
     volumes:
-      - ../..:/workspace
-    networks:
-      - caddy_network
-    labels:
-      caddy: project.local
-      caddy.reverse_proxy: "{{upstreams 9000}}"
-
-networks:
-  caddy_network:
-    external: true
-    name: caddy_network
+      - ../../project:/app
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"

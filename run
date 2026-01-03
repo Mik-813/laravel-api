@@ -28,7 +28,7 @@ case "$1" in
       exit 1
     fi
     cd "$PROJECT_DIR/dependencies/dist" \
-    && docker compose up -d --build
+    && docker compose up -d --build --remove-orphans
     ;;
   *)
     printf "Unknown option: %s\n" "$1"

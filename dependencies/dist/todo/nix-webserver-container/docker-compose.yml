@@ -1,0 +1,10 @@
+services:
+  laravel_api:
+    container_name: laravel_api
+    build:
+      context: ../../
+      dockerfile: dependencies/dist/Dockerfile
+    volumes:
+      - ../..:/workspace
+    tty: true
+    stdin_open: true
