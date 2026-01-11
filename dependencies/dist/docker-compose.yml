@@ -1,10 +1,24 @@
 services:
-  franken_php:
-    container_name: franken_php
-    image: dunglas/frankenphp
+  php-laravel:
+    build:
+      context: ../.
+      dockerfile: dist/php-laravel/Dockerfile
     volumes:
-      - ../../project:/app
+      - ../..:/workspace
+      - ../../project:/var/www/html
+    tty: true
+    stdin_open: true
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "8080:80"
+  
+  nginx:
+    depends_on:
+      php-laravel:
+        condition: service_started
+    network_mode: service:php-laravel
+    image: nginx:latest
+    volumes:
+      - ../../project:/var/www/html
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/entrypoint.sh:/workspace/entrypoint.sh:ro
+    entrypoint: /workspace/entrypoint.sh
