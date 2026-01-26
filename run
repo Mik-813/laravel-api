@@ -20,7 +20,7 @@ dev() {
   cd "$PROJECT_DIR/dependencies/dev" \
   && docker compose up -d \
   && cd "$PROJECT_DIR/project" \
-  && nix develop "$PROJECT_DIR/dependencies -c 'composer setup'"
+  && nix develop path:$PROJECT_DIR/dependencies --command bash -c "composer setup && exec $SHELL"
 }
 
 dist() {
