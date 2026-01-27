@@ -60,7 +60,7 @@ class AuthController extends Controller
     public function sendVerificationEmail(Request $request)
     {
         $request->validate([
-            'verification_url' => 'required|url',
+            'url' => 'required|url',
         ]);
 
         $user = $request->user();
@@ -71,7 +71,7 @@ class AuthController extends Controller
             ['token' => $token, 'created_at' => now()]
         );
 
-        $url = $request->verification_url . (str_contains($request->verification_url, '?') ? '&' : '?') . 'token=' . $token;
+        $url = $request->url . (str_contains($request->url, '?') ? '&' : '?') . 'token=' . $token;
 
         Mail::raw("Please verify your email by clicking this link: {$url}", function ($message) use ($user) {
             $message->to($user->email)->subject('Verify Your Email');
@@ -99,5 +99,50 @@ class AuthController extends Controller
         DB::table('email_verification_tokens')->where('email', $record->email)->delete();
 
         return response()->json(['message' => 'Email verified successfully']);
+    }
+
+    public function sendResetPasswordEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users',
+            'url' => 'required|url',
+        ]);
+
+        $token = Str::random(64);
+
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $request->email],
+            ['token' => $token, 'created_at' => now()]
+        );
+
+        $url = $request->url . (str_contains($request->url, '?') ? '&' : '?') . 'token=' . $token;
+
+        Mail::raw("Reset your password by clicking this link: {$url}", function ($message) use ($request) {
+            $message->to($request->email)->subject('Reset Your Password');
+        });
+
+        return response()->json(['message' => 'Password reset email sent']);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+            'password' => 'required|min:8',
+        ]);
+
+        $record = DB::table('password_reset_tokens')->where('token', $request->token)->first();
+
+        if (! $record) {
+            return response()->json(['message' => 'Invalid or expired token'], 422);
+        }
+
+        $user = User::where('email', $record->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        DB::table('password_reset_tokens')->where('email', $record->email)->delete();
+
+        return response()->json(['message' => 'Password reset successfully']);
     }
 }

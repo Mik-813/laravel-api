@@ -4,17 +4,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
-Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::prefix('auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/verify', [AuthController::class, 'verify']);
+    Route::post('/email/send-reset-password', [AuthController::class, 'sendResetPasswordEmail']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-Route::post('/auth/verify', [AuthController::class, 'verify']);
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/auth/email/send-verification', [AuthController::class, 'sendVerificationEmail']);
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
-    Route::get('/user', function (Request $request) {
-        return $request->user();
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/email/send-verification', [AuthController::class, 'sendVerificationEmail']);
+        Route::post('/logout', [AuthController::class, 'logout']);
     });
+});
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
