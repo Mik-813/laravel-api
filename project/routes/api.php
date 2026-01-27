@@ -17,6 +17,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/admin/stats', function () {
+        return response()->json(['message' => 'Admin statistics dashboard']);
+    });
+});
+
 Route::fallback(function () {
     return response()->json(['message' => 'Not Found'], 404);
 });
