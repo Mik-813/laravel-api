@@ -12,7 +12,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/email/send-reset-password', [AuthController::class, 'sendResetPasswordEmail']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-    Route::get('/google/redirect', [SocialAuthController::class, 'redirect']);
+    Route::post('/google/redirect', [SocialAuthController::class, 'redirect']);
     Route::get('/google/callback', [SocialAuthController::class, 'callback']);
 
     Route::middleware('auth:sanctum')->group(function () {

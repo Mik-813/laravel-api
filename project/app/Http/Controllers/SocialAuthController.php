@@ -4,14 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Rules\Recaptcha;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialAuthController extends Controller
 {
-    public function redirect(): JsonResponse
+    public function redirect(Request $request): JsonResponse
     {
+        $request->validate([
+            'recaptcha_token' => ['required', new Recaptcha],
+        ]);
+
         return response()->json([
             'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl(),
         ]);

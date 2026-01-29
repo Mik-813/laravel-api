@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use App\Rules\Recaptcha;
 
 class AuthController extends Controller
 {
@@ -17,6 +18,7 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
+            'recaptcha_token' => ['required', new Recaptcha],
         ]);
 
         $user = User::create([
@@ -35,6 +37,7 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+            'recaptcha_token' => ['required', new Recaptcha],
         ]);
 
         $user = User::where('email', $request->email)->first();
