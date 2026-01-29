@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SocialAuthController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -10,6 +11,9 @@ Route::prefix('auth')->group(function () {
     Route::post('/verify', [AuthController::class, 'verify']);
     Route::post('/email/send-reset-password', [AuthController::class, 'sendResetPasswordEmail']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
+    Route::get('/google/redirect', [SocialAuthController::class, 'redirect']);
+    Route::get('/google/callback', [SocialAuthController::class, 'callback']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/email/send-verification', [AuthController::class, 'sendVerificationEmail']);
