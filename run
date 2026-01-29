@@ -101,7 +101,7 @@ gen() {
   docker compose  -f "$PROJECT_DIR/dependencies/docker-compose.yml" run --entrypoint "" php-laravel sh -c "cd /workspace/project; composer setup"
 }
 
-run() {
+containers() {
   echo $(color "yellow" "Running containers...")
 
   if ! command -v docker >/dev/null 2>&1; then
