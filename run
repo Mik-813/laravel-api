@@ -116,7 +116,7 @@ shell() {
 }
 
 case "$1" in
-  ("") gen; run;;
+  ("") gen; containers;;
   (setup-dev) setup_dev;;
   (gen) gen;;
   (containers) containers;;
